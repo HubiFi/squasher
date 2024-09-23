@@ -1,9 +1,13 @@
 class InitSchema < ActiveRecord::Migration<%= @config.migration_version %>
   def up
-<%- each_schema_line do |line| -%>
-<%- next if line.strip.empty?  -%>
-<%= "    #{line}" %>
-<%- end -%>
+    <%- each_schema_line do |line| -%>
+      <%- next if line.strip.empty? -%>
+      <%- if line.strip.split(" ").first == "create_schema" -%>
+        <%= "    #{line} unless schema_exists? #{line.split(' ').last}" %>
+      <%- else -%>
+        <%= "    #{line}" %>
+      <%- end -%>
+    <%- end -%>
   end
 
   def down
